@@ -38,10 +38,10 @@ void *cientThread(void *arg)
     connect(clientSocket, (struct sockaddr *)&serverAddr, addr_size);
     strcpy(message, "PUSH a");
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
     {
         send(clientSocket, message, strlen(message), 0);
-        usleep(5000);
+        usleep(50000);
     }
     printf("finished pushing 100 \n");
     bzero(message, sizeof(message));
@@ -58,22 +58,27 @@ void *cientThread(void *arg)
 
 int main()
 {
-    int i = 0;
-    pthread_t tid[5];
-    while (i < 4)
-    {
-        if (pthread_create(&tid[i], NULL, cientThread, NULL) != 0)
-            printf("Failed to create thread\n");
-        i++;
-    }
+    pthread_t a;
+    pthread_create(&a, NULL, cientThread, NULL);
+    sleep(1);
+    pthread_t b;
+    pthread_create(&b, NULL, cientThread, NULL);
+    sleep(1);
+    pthread_t c;
+    pthread_create(&c, NULL, cientThread, NULL);
+    sleep(1);
+    pthread_t d;
+    pthread_create(&d, NULL, cientThread, NULL);
+    sleep(1);
+    pthread_join(a, NULL);
+    sleep(1);
+    pthread_join(b, NULL);
+    sleep(1);
+    pthread_join(c, NULL);
+    sleep(1);
+    pthread_join(d, NULL);
 
-    i = 0;
-    while (i < 4)
-    {
-        pthread_join(tid[i++], NULL);
-        printf("thread end number %d:\n", i);
-    }
-    sleep(10);
+    sleep(2);
     printf("Out in main thread\n");
     char message[1000];
 
@@ -116,7 +121,7 @@ int main()
     printf("Data received: size is %s\n", buffer);
     assert(buffer[6] == '4');
     assert(buffer[7] == '0');
-    // assert(buffer[8] == '0');
+    assert(buffer[8] == '0');
 
     bzero(message, sizeof(message));
     strcpy(message, "exit");

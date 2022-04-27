@@ -5,3 +5,5 @@ clienttest.o
 mystack.o
 server
 server.o
+clienttest2
+clienttest2.o
