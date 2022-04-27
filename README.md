@@ -40,7 +40,6 @@ Go to the project directory
 Install dependencies
 
 ```bash
-  sudo apt install ruby
   sudo apt install make
   sudo apt install g++ 
 ```
