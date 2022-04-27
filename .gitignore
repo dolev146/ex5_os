@@ -7,3 +7,5 @@ server
 server.o
 clienttest2
 clienttest2.o
+.vscode/
+.vscode/settings.json
