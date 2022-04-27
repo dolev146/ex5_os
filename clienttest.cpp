@@ -31,14 +31,14 @@ void *cientThread(void *arg)
 
     // Set IP address to localhost
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
+    memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
 
     // Connect the socket to the server using the address
     addr_size = sizeof serverAddr;
     connect(clientSocket, (struct sockaddr *)&serverAddr, addr_size);
     strcpy(message, "PUSH a");
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 10; i++)
     {
         send(clientSocket, message, strlen(message), 0);
         usleep(5000);
@@ -66,14 +66,14 @@ int main()
             printf("Failed to create thread\n");
         i++;
     }
-    sleep(5);
+
     i = 0;
     while (i < 4)
     {
         pthread_join(tid[i++], NULL);
         printf("thread end number %d:\n", i);
     }
-
+    sleep(10);
     printf("Out in main thread\n");
     char message[1000];
 
@@ -116,8 +116,7 @@ int main()
     printf("Data received: size is %s\n", buffer);
     assert(buffer[6] == '4');
     assert(buffer[7] == '0');
-    assert(buffer[8] == '0');
-    assert(buffer[9] == '0');
+    // assert(buffer[8] == '0');
 
     bzero(message, sizeof(message));
     strcpy(message, "exit");

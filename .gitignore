@@ -1,0 +1,7 @@
+client
+client.o
+clienttest
+clienttest.o
+mystack.o
+server
+server.o
