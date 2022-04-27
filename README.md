@@ -6,6 +6,13 @@
 - [@Dolev Dublon, ID: 207867342](https://www.github.com/dolev146)
 - [@Yakov Khodorkovsky, ID: 207045063 ](https://www.github.com/yakov103)
 
+information we used
+
+- https://www.youtube.com/watch?v=BIJGSQEipEE
+- https://www.youtube.com/watch?v=rPV6b8BUwxM
+- https://www.youtube.com/watch?v=0wrdcxkgujc
+- https://beej.us/guide/bgnet/html/#a-simple-stream-server
+
  
 # Multi-proccess server in c mmap() memeory for shared memory stack allocation and fcntl() for blocking
 
