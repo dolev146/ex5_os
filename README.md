@@ -22,6 +22,8 @@
 
 
 ## Run Locally
+ 
+ [![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/62290677/165375827-de78d043-8283-4028-9bac-c79f73192469.png)](https://www.youtube.com/watch?v=uKM5gwQ0zEE)
 
 Clone the project
 
