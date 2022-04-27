@@ -54,15 +54,23 @@ int main()
 {
     pthread_t a;
     pthread_create(&a, NULL, cientThread, NULL);
+    sleep(0.1);
     pthread_t b;
     pthread_create(&b, NULL, cientThread, NULL);
+    sleep(0.1);
     pthread_t c;
     pthread_create(&c, NULL, cientThread, NULL);
+    sleep(0.1);
     pthread_t d;
     pthread_create(&d, NULL, cientThread, NULL);
+    sleep(0.1);
+
     pthread_join(a, NULL);
+    sleep(0.1);
     pthread_join(b, NULL);
+    sleep(0.1);
     pthread_join(c, NULL);
+    sleep(0.1);
     pthread_join(d, NULL);
 
     return 0;
