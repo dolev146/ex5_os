@@ -82,13 +82,13 @@ and in a diffrent terminal run
   ./clienttest
 ```
 
-this is testing makeing 150! connections that sending messages and reciving mesesges from the server
+this is testing makeing 4! connections that sending messages and reciving mesesges from the server and pushing the stack information
 
 
 press ctrl+c to terminate the server terminal
 
 
-The second test will be testing the stack implementation for blocking
+The second test will be testing the connectiviry that the server can handle up to 4 connections at once!
 
 
 ```bash
