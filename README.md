@@ -24,6 +24,7 @@ information we used
 3) TOP
 
 * locking mechanisim with fcntl()
+ using the file 1.txt
 
 * we also had to use understand and use shared memroy with mmap() 
 
