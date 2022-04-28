@@ -1,2 +1,1 @@
-i love india
-india is my counry
+this is a helper file to help using the fcntl locking mechanism to help multi-proccessing the server
