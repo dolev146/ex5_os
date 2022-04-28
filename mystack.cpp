@@ -28,30 +28,6 @@ void push(char* str){
 }
 
 
-// node_stack_t *head_stack = NULL;
-
-
-// void push(char *str)
-// {
-    
-//     node_stack_t *newnode = (node_stack_t *)malloc(sizeof(node_stack_t));
-//     // step 1. allocate memory to hold word
-//     newnode->txt = (char *)malloc(strlen(str) + 1);
-//     // step 2. copy the current word
-//     strcpy(newnode->txt, str);
-//     newnode->next = NULL;
-//     if (head_stack == NULL)
-//     {
-//         head_stack = newnode;
-//     }
-//     else
-//     {
-//         newnode->next = head_stack;
-//         head_stack = newnode;
-//     }
-//     size++;
-// }
-
 void pop(){
     // if head_stack is NULL, return
     if (head_stack == NULL)
