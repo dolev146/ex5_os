@@ -6,6 +6,13 @@
 - [@Dolev Dublon, ID: 207867342](https://www.github.com/dolev146)
 - [@Yakov Khodorkovsky, ID: 207045063 ](https://www.github.com/yakov103)
 
+information we used
+
+- https://www.youtube.com/watch?v=BIJGSQEipEE
+- https://www.youtube.com/watch?v=rPV6b8BUwxM
+- https://www.youtube.com/watch?v=0wrdcxkgujc
+- https://beej.us/guide/bgnet/html/#a-simple-stream-server
+
  
 # Multi-proccess server in c mmap() memeory for shared memory stack allocation and fcntl() for blocking
 
@@ -23,7 +30,8 @@
 
 ## Run Locally
  
- [![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/62290677/165375827-de78d043-8283-4028-9bac-c79f73192469.png)](https://www.youtube.com/watch?v=uKM5gwQ0zEE)
+ 
+ [![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/62290677/165639055-53c71b69-c166-48e2-a649-60723bed035e.png)](https://www.youtube.com/watch?v=LBb2xoNGdDU)
 
 Clone the project
 
@@ -74,13 +82,13 @@ and in a diffrent terminal run
   ./clienttest
 ```
 
-this is testing makeing 150! connections that sending messages and reciving mesesges from the server
+this is testing makeing 4! connections that sending messages and reciving mesesges from the server and pushing the stack information
 
 
 press ctrl+c to terminate the server terminal
 
 
-The second test will be testing the stack implementation for blocking
+The second test will be testing the connectiviry that the server can handle up to 4 connections at once!
 
 
 ```bash
