@@ -28,8 +28,12 @@
 
 int main()
 {
+    int filedescriptor_example;
+    filedescriptor_example = open("1.txt", O_WRONLY);
     char buffer_ruby_test[BUFSIZE] = "hi from server ";
     struct flock lock;
+    memset(&lock, 0, sizeof(lock));
+
     int *size = (int *)mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     *size = 0;
     int sockfd, ret;
@@ -94,11 +98,11 @@ int main()
                 lock.l_type = F_WRLCK;
                 // I There are locks available as write lock, read lock, refer man page please
                 // Here, we try a write lock. F_RDLCK has to be used for read lock.
-                fcntl(newSocket, F_SETLKW, &lock);
+                fcntl(filedescriptor_example, F_SETLKW, &lock);
                 if (strcmp(buffer, ":exit") == 0)
                 {
                     lock.l_type = F_UNLCK;
-                    fcntl(newSocket, F_SETLKW, &lock);
+                    fcntl(filedescriptor_example, F_SETLKW, &lock);
                     close(newSocket);
                     printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
                     return 0;
@@ -149,14 +153,14 @@ int main()
                     bzero(buffer_ruby_test, sizeof(buffer_ruby_test));
                     sleep(1);
                     // unlock with fcntl
-                    // lock.l_type = F_UNLCK;
-                    // fcntl(newSocket, F_SETLKW, &lock);
-                    // close(newSocket);
+                    lock.l_type = F_UNLCK;
+                    fcntl(filedescriptor_example, F_SETLKW, &lock);
+                    close(newSocket);
                     printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
                     return 0;
                 }
                 lock.l_type = F_UNLCK;
-                fcntl(newSocket, F_SETLKW, &lock);
+                fcntl(filedescriptor_example, F_SETLKW, &lock);
             }
         }
     }
