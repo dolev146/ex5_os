@@ -27,7 +27,7 @@ void *cientThread(void *arg)
     serverAddr.sin_family = AF_INET;
 
     // Set port number, using htons function
-    serverAddr.sin_port = htons(5008);
+    serverAddr.sin_port = htons(5000);
 
     // Set IP address to localhost
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");

@@ -24,7 +24,7 @@
 #include <sys/mman.h>
 #define MAX_LIMIT 1024
 #define BUFSIZE 1024
-#define PORT 5008
+#define PORT 5000
 
 int main()
 {
@@ -132,7 +132,7 @@ int main()
                 {
                     // printf("DEBUG: from client : %s \n", buffer);
                     char *msg = top();
-                    send(newSocket, msg, sizeof(msg), 0);
+                    send(newSocket, msg, 1024, 0);
                     free(msg);
                 }
                 else if (strncmp(buffer, "size", 4) == 0)

@@ -18,7 +18,7 @@
 // include mmap header
 #include <sys/mman.h>
 
-#define PORT "5008" // the port users will be connecting to
+#define PORT "5000" // the port users will be connecting to
 
 #define BACKLOG 100 // how many pending connections queue will hold
 char size_message[1024];
@@ -151,7 +151,6 @@ int main(void)
             printf("Forked\n");
             while (true)
             {
-                
 
                 recv(*new_fd, client_message, sizeof(client_message), 0);
                 // printf("client message: %s and new_fd %d\n", client_message, *new_fd);
