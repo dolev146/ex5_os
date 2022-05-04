@@ -24,14 +24,14 @@
 #include <sys/mman.h>
 #define MAX_LIMIT 1024
 #define BUFSIZE 1024
-#define PORT 5001
+#define PORT 5002
 
 int main()
 {
     // node_stack_t *head_stack;
     // init_stack(head_stack);
     node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-     strcpy(head_stack->txt, "head");
+    strcpy(head_stack->txt, "head");
 
     int filedescriptor_example;
     filedescriptor_example = open("1.txt", O_WRONLY);

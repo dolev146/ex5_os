@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #define MAX 1024
-#define PORT 5001
+#define PORT 5002
 #define SA struct sockaddr
 void func(int sockfd)
 {
