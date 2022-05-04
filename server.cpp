@@ -123,9 +123,14 @@ int main()
 
                     memcpy(buffer, buffer + 5, MAX_LIMIT - 5);
                     node_stack_t *new_node = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+                    new_node->next = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
                     strcpy(new_node->txt, buffer);
+                    printf("DEBUG:head pointer : %p\n", head_stack);
+                    printf("DEBUG:new_node pointer : %p\n", new_node);
                     new_node->next = head_stack;
+
                     head_stack = new_node;
+
                     printf("DEBUG:from server : %s\n", head_stack->txt);
                     // char *msg = push(buffer, head_stack, new_node);
                     // printf("DEBUG: afte pushed: %s\n", msg);
