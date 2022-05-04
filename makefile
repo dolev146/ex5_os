@@ -15,8 +15,14 @@ clienttest2: clienttest2.o
 	$(CC) $(CFlags) -o $@  $^ -lpthread
 
 
-server: $(OBJS)
-	$(CC) $(CFlags) -o $@  $^ 
+server: server.o mystack.o
+	$(CC) $(CFlags) -o $@  server.o mystack.o
+
+server.o:server.cpp 
+	$(CC) $(CFlags) -c server.cpp 
+
+mystack.o: mystack.cpp mystack.hpp
+	$(CC) $(CFlags) -c mystack.cpp 
 
 %: %.cpp
 	$(CC) $(CFlags) -c -o $@  $^ -lpthread

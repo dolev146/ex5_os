@@ -27,7 +27,7 @@ void *cientThread(void *arg)
     serverAddr.sin_family = AF_INET;
 
     // Set port number, using htons function
-    serverAddr.sin_port = htons(5000);
+    serverAddr.sin_port = htons(5001);
 
     // Set IP address to localhost
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -42,7 +42,7 @@ void *cientThread(void *arg)
     {
         printf("Send failed\n");
     }
-    usleep(5000);
+    usleep(5001);
     recv(clientSocket, message, strlen(message), 0);
     printf("%s\n", message);
 

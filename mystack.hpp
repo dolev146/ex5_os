@@ -6,13 +6,14 @@
 struct node_stack
 {
     struct node_stack *next;
-    char *txt;
+    char txt[1024];
 };
 typedef struct node_stack node_stack_t;
 
-
-void push(char *str);
-void pop();
-char *top();
+char *push(char *str, node_stack_t *head_stack,node_stack_t *new_node);
+void pop(node_stack_t *head_stack, int size);
+char *top(node_stack_t *head_stack);
+void print_stack(node_stack_t *head_stack);
+void init_stack(node_stack_t *head_param);
 
 #endif // MYSTACK

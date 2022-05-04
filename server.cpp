@@ -24,10 +24,15 @@
 #include <sys/mman.h>
 #define MAX_LIMIT 1024
 #define BUFSIZE 1024
-#define PORT 5000
+#define PORT 5001
 
 int main()
 {
+    // node_stack_t *head_stack;
+    // init_stack(head_stack);
+    node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+     strcpy(head_stack->txt, "head");
+
     int filedescriptor_example;
     filedescriptor_example = open("1.txt", O_WRONLY);
     char buffer_ruby_test[BUFSIZE] = "hi from server ";
@@ -99,7 +104,7 @@ int main()
                 // I There are locks available as write lock, read lock, refer man page please
                 // Here, we try a write lock. F_RDLCK has to be used for read lock.
                 fcntl(filedescriptor_example, F_SETLKW, &lock);
-                if (strcmp(buffer, ":exit") == 0)
+                if (strcmp(buffer, "exit") == 0)
                 {
                     lock.l_type = F_UNLCK;
                     fcntl(filedescriptor_example, F_SETLKW, &lock);
@@ -107,12 +112,19 @@ int main()
                     printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
                     return 0;
                 }
+                else if (strncmp(buffer, "print", 5) == 0)
+                {
+                    print_stack(head_stack);
+                }
                 else if (strncmp(buffer, "PUSH", 4) == 0)
                 {
                     // printf("PUSH %c\n", buffer[5]);
                     // printf("DEBUG:from client : %s\n", buffer);
+
                     memcpy(buffer, buffer + 5, MAX_LIMIT - 5);
-                    push(buffer);
+                    node_stack_t *new_node = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+                    char *msg = push(buffer, head_stack, new_node);
+                    printf("DEBUG: afte pushed: %s\n", msg);
                     *size = *size + 1;
                     // printf("size in push: %d\n", *size);
 
@@ -124,16 +136,33 @@ int main()
                 {
 
                     // printf("DEBUG: from client : %s \n", buffer);
-                    pop();
-                    *size = *size - 1;
+                    if (*size == 0)
+                    {
+                        // do noting
+                    }
+                    else
+                    {
+                        pop(head_stack, *size);
+                        *size = *size - 1;
+                    }
+
                     // printf("DEBUG: pop good!\n");
                 }
                 else if (strncmp(buffer, "TOP", 3) == 0)
                 {
                     // printf("DEBUG: from client : %s \n", buffer);
-                    char *msg = top();
-                    send(newSocket, msg, 1024, 0);
-                    free(msg);
+                    if (*size == 0)
+                    {
+                        // do noting
+                    }
+                    else
+                    {
+
+                        char *msg = top(head_stack);
+                        printf("DEBUG: TOP value %s\n", msg);
+                        send(newSocket, msg, 1024, 0);
+                        munmap(msg, strlen(msg));
+                    }
                 }
                 else if (strncmp(buffer, "size", 4) == 0)
                 {
@@ -142,7 +171,7 @@ int main()
                     bzero(buffer, sizeof(buffer));
                     strcat(buffer, "DEBUG:");
                     sprintf(size_message, "%d", *size);
-                    strncat(buffer, size_message, sizeof(size_message));
+                    strncat(buffer, size_message, 1024);
                     printf("DEBUG: size call %d\n", *size);
                     send(newSocket, buffer, sizeof(buffer), 0);
                 }
