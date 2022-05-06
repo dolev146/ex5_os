@@ -123,7 +123,14 @@ int main()
                 if (strncmp(buffer, "TOP", 3) == 0)
                 {
                     // printf("DEBUG:TOP\n");
-                    send(newSocket, head_stack[*counter - 1].txt, 1024, 0);
+                    char * msg = head_stack[*counter - 1].txt;
+                    // concat "OUTPUT" and msg
+                    char * msg_output = (char *)malloc(sizeof(char) * (strlen(msg) + strlen("OUTPUT") + 1));
+                    strcpy(msg_output, "OUTPUT:");
+                    strcat(msg_output, msg);
+                    // send msg_output
+                    send(newSocket, msg_output, strlen(msg_output), 0);
+                    // send(newSocket, head_stack[*counter - 1].txt, 1024, 0);
                 }
                 if (strncmp(buffer, "POP", 3) == 0)
                 {
