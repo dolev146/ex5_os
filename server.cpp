@@ -40,7 +40,12 @@ int main()
     signal(SIGALRM, (void (*)(int))kill_child);
     // node_stack_t *head_stack;
     // init_stack(head_stack);
-    node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t) * 200, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t) * 1000, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    if (head_stack == MAP_FAILED)
+    {
+        printf("Mapping Failed\n");
+        return 1;
+    }
     strcpy(head_stack->txt, "NULL");
     head_stack->next = head_stack + sizeof(node_stack_t);
     int *counter = (int *)mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -110,33 +115,41 @@ int main()
                 printf("DEBUG:lock \n");
                 if (strncmp(buffer, "PUSH", 4) == 0)
                 {
-                    printf("DEBUG:PUSH\n");
+                    // printf("DEBUG:PUSH\n");
                     memcpy(buffer, buffer + 5, MAX_LIMIT - 5);
-                    int where = *counter;
-                    int offset = where * sizeof(node_stack_t);
-                    printf("offset %d\n", offset);
-                    node_stack_t *temp = head_stack + offset;
-                    printf("got here\n");
-                    strcpy(temp->txt, buffer);
-                    printf("got here2\n");
+                    strcpy(head_stack[*counter].txt, buffer);
                     (*counter)++;
                 }
                 if (strncmp(buffer, "TOP", 3) == 0)
                 {
-                    printf("DEBUG:TOP\n");
-                    int where = *counter - 1;
-                    int offset = (sizeof(node_stack_t) * where);
-                    printf("offset %d\n", offset);
-                    node_stack_t *temp = head_stack - offset;
-                    send(newSocket, temp->txt, 1024, 0);
+                    // printf("DEBUG:TOP\n");
+                    send(newSocket, head_stack[*counter - 1].txt, 1024, 0);
                 }
                 if (strncmp(buffer, "POP", 3) == 0)
                 {
-                    printf("DEBUG:POP\n");
-                    node_stack_t *temp = head_stack + sizeof(node_stack_t) * (*counter);
-                    strcpy(temp->txt, "");
+                    // printf("DEBUG:POP\n");
+                    strcpy(head_stack[*counter].txt, "");
                     (*counter)--;
                 }
+                if (strncmp(buffer, "exit", 4) == 0)
+                {
+                    bzero(buffer, 1024);
+                    lock.l_type = F_UNLCK;
+                    fcntl(filedescriptor_example, F_SETLKW, &lock);
+                    printf("DEBUG:EXIT\n");
+                    return 0;
+                }
+                if (strncmp(buffer, "size", 4) == 0)
+                {
+                    sprintf(size_message, "%d", *counter);
+                    send(newSocket, size_message, 1024, 0);
+                }
+                if (strncmp(buffer, "ruby", 4) == 0)
+                {
+                    // printf("DEBUG:ruby\n");
+                    send(newSocket, buffer_ruby_test, 1024, 0);
+                }
+
                 bzero(buffer, 1024);
                 lock.l_type = F_UNLCK;
                 fcntl(filedescriptor_example, F_SETLKW, &lock);

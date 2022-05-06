@@ -37,7 +37,7 @@ void *cientThread(void *arg)
     addr_size = sizeof serverAddr;
     connect(clientSocket, (struct sockaddr *)&serverAddr, addr_size);
 
-    strcpy(message, "hello from ruby \n");
+    strcpy(message, "ruby client hello\n");
     if (send(clientSocket, message, strlen(message), 0) < 0)
     {
         printf("Send failed\n");

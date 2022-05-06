@@ -119,9 +119,9 @@ int main()
     }
     // Print the received message
     printf("Data received: size is %s\n", buffer);
-    assert(buffer[6] == '4');
-    assert(buffer[7] == '0');
-    assert(buffer[8] == '0');
+    assert(buffer[0] == '4');
+    assert(buffer[1] == '0');
+    assert(buffer[2] == '0');
 
     bzero(message, sizeof(message));
     strcpy(message, "exit");
