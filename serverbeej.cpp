@@ -18,7 +18,7 @@
 // include mmap header
 #include <sys/mman.h>
 
-#define PORT "5002" // the port users will be connecting to
+#define PORT "5004" // the port users will be connecting to
 
 #define BACKLOG 100 // how many pending connections queue will hold
 char size_message[1024];

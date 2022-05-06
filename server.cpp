@@ -24,42 +24,47 @@
 #include <sys/mman.h>
 #define MAX_LIMIT 1024
 #define BUFSIZE 1024
-#define PORT 5002
+#define PORT 5004
+
+char buffer_ruby_test[BUFSIZE] = "hi from server ";
+char size_message[1024];
+pid_t childpid = -1;
+
+void kill_child(int sig)
+{
+    kill(childpid, SIGKILL);
+}
 
 int main()
 {
+    signal(SIGALRM, (void (*)(int))kill_child);
     // node_stack_t *head_stack;
     // init_stack(head_stack);
-    node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    strcpy(head_stack->txt, "head");
+    node_stack_t *head_stack = (node_stack_t *)mmap(NULL, sizeof(node_stack_t) * 1000, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    strcpy(head_stack->txt, "NULL");
+    head_stack->next = head_stack + sizeof(node_stack_t);
 
-    int filedescriptor_example;
-    filedescriptor_example = open("1.txt", O_WRONLY);
-    char buffer_ruby_test[BUFSIZE] = "hi from server ";
     struct flock lock;
     memset(&lock, 0, sizeof(lock));
 
     int *size = (int *)mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     *size = 0;
+
     int sockfd, ret;
     struct sockaddr_in serverAddr;
-
     int newSocket;
     struct sockaddr_in newAddr;
-
     socklen_t addr_size;
 
     char buffer[1024];
-    char size_message[1024];
-    pid_t childpid;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
-        printf("[-]Error in connection.\n");
+        printf("DEBUG:[-]Error in connection.\n");
         exit(1);
     }
-    printf("[+]Server Socket is created.\n");
+    printf("DEBUG:[+]Server Socket is created.\n");
 
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
@@ -69,18 +74,18 @@ int main()
     ret = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
     if (ret < 0)
     {
-        printf("[-]Error in binding.\n");
+        printf("DEBUG:[-]Error in binding.\n");
         exit(1);
     }
-    printf("[+]Bind to port %d\n", PORT);
+    printf("DEBUG:[+]Bind to port %d\n", PORT);
 
     if (listen(sockfd, 100) == 0)
     {
-        printf("[+]Listening....\n");
+        printf("DEBUG:[+]Listening....\n");
     }
     else
     {
-        printf("[-]Error in binding.\n");
+        printf("DEBUG:[-]Error in binding.\n");
     }
 
     while (1)
@@ -90,119 +95,169 @@ int main()
         {
             exit(1);
         }
-        printf("Connection accepted from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
+        printf("DEBUG:Connection accepted from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
 
         if ((childpid = fork()) == 0)
         {
-            close(sockfd);
-
+            int filedescriptor_example = open("1.txt", O_WRONLY);
             while (1)
             {
-                recv(newSocket, buffer, 1024, 0);
-                // Here, I initialize. Means, set this up for action.
+                if (!recv(newSocket, buffer, 1024, 0))
+                {
+                    printf("DEBUG:[-]Connection closed.\n");
+                    exit(1);
+                }
                 lock.l_type = F_WRLCK;
-                // I There are locks available as write lock, read lock, refer man page please
-                // Here, we try a write lock. F_RDLCK has to be used for read lock.
                 fcntl(filedescriptor_example, F_SETLKW, &lock);
-                if (strcmp(buffer, "exit") == 0)
+                printf("DEBUG:lock \n");
+                if (strncmp(buffer, "PUSH", 4) == 0)
                 {
-                    lock.l_type = F_UNLCK;
-                    fcntl(filedescriptor_example, F_SETLKW, &lock);
-                    close(newSocket);
-                    printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
-                    return 0;
-                }
-                else if (strncmp(buffer, "print", 5) == 0)
-                {
-                    print_stack(head_stack);
-                }
-                else if (strncmp(buffer, "PUSH", 4) == 0)
-                {
-                    // printf("PUSH %c\n", buffer[5]);
-                    // printf("DEBUG:from client : %s\n", buffer);
-
+                    printf("DEBUG:PUSH\n");
                     memcpy(buffer, buffer + 5, MAX_LIMIT - 5);
-                    node_stack_t *new_node = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-                    new_node->next = (node_stack_t *)mmap(NULL, sizeof(node_stack_t), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-                    strcpy(new_node->txt, buffer);
-                    printf("DEBUG:head pointer : %p\n", head_stack);
-                    printf("DEBUG:new_node pointer : %p\n", new_node);
-                    new_node->next = head_stack;
-
-                    head_stack = new_node;
-
-                    printf("DEBUG:from server : %s\n", head_stack->txt);
-                    // char *msg = push(buffer, head_stack, new_node);
-                    // printf("DEBUG: afte pushed: %s\n", msg);
-                    *size = *size + 1;
-                    // printf("size in push: %d\n", *size);
-
-                    // printf("server: pushed and newSocket is %d\n", *newSocket);
-                    // sleep(5);
-                    // printf("DEBUG: push good! socket %d\n", client_socket);
+                    node_stack_t *temp = head_stack + (sizeof(node_stack_t) * (*size));
+                    strcpy(temp->txt, buffer);
+                    // (*size)++
                 }
-                else if (strncmp(buffer, "POP", 3) == 0)
+                if (strncmp(buffer, "TOP", 3) == 0)
                 {
-
-                    // printf("DEBUG: from client : %s \n", buffer);
-                    if (*size == 0)
-                    {
-                        // do noting
-                    }
-                    else
-                    {
-                        pop(head_stack, *size);
-                        *size = *size - 1;
-                    }
-
-                    // printf("DEBUG: pop good!\n");
+                    printf("DEBUG:TOP\n");
+                    node_stack_t *temp = head_stack + sizeof(node_stack_t) * (*size);
+                    send(newSocket, temp->txt, 1024, 0);
                 }
-                else if (strncmp(buffer, "TOP", 3) == 0)
+                if (strncmp(buffer, "POP", 3) == 0)
                 {
-                    // printf("DEBUG: from client : %s \n", buffer);
-                    if (*size == 0)
-                    {
-                        // do noting
-                    }
-                    else
-                    {
-
-                        char *msg = top(head_stack);
-                        printf("DEBUG: TOP value %s\n", msg);
-                        send(newSocket, msg, 1024, 0);
-                        munmap(msg, strlen(msg));
-                    }
+                    printf("DEBUG:POP\n");
+                    node_stack_t *temp = head_stack + sizeof(node_stack_t) * (*size);
+                    strcpy(temp->txt, "");
+                    (*size)--;
                 }
-                else if (strncmp(buffer, "size", 4) == 0)
-                {
-                    // printf("DEBUG: IN SIZE: %s \n", buffer);
-                    // printf("DEBUG: size call \n");
-                    bzero(buffer, sizeof(buffer));
-                    strcat(buffer, "DEBUG:");
-                    sprintf(size_message, "%d", *size);
-                    strncat(buffer, size_message, 1024);
-                    printf("DEBUG: size call %d\n", *size);
-                    send(newSocket, buffer, sizeof(buffer), 0);
-                }
-                if (strncmp(buffer, "hello from ruby \n", 17) == 0) /* hello from ruby \n */
-                {
-
-                    send(newSocket, buffer_ruby_test, 1024, 0);
-                    bzero(buffer_ruby_test, sizeof(buffer_ruby_test));
-                    sleep(1);
-                    // unlock with fcntl
-                    lock.l_type = F_UNLCK;
-                    fcntl(filedescriptor_example, F_SETLKW, &lock);
-                    close(newSocket);
-                    printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
-                    return 0;
-                }
+                bzero(buffer, 1024);
                 lock.l_type = F_UNLCK;
                 fcntl(filedescriptor_example, F_SETLKW, &lock);
+                printf("DEBUG:unlock \n");
             }
+            // if (strncmp(buffer, "exit", 4) == 0)
+            // {
+            //     lock.l_type = F_UNLCK;
+            //     fcntl(filedescriptor_example, F_SETLKW, &lock);
+            //     close(newSocket);
+            //     printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
+            //     return 0;
+            // }
+
+            // else if (strncmp(buffer, "PUSH", 4) == 0)
+            // {
+            //     memcpy(buffer, buffer + 5, MAX_LIMIT - 5);
+            //     printf("heasdasdasdre5");
+            //     if ((*size) == 0)
+            //     {
+            //         strcpy(head_stack->txt, buffer);
+            //         (*size)++;
+            //     }
+            //     else if ((*size) <= 1000)
+            //     {
+            //         // catch the block of memory for the new node that is next to the head_stack
+            //         // printf("PUSH call : %d , socket : %d\n", *size, newSocket);
+            //         // int a = *size + 1;
+            //         // printf("a : %d\n", a);
+            //         // *size = a;
+            //         printf("here5");
+            //         (*size)++;
+            //         printf("here4");
+            //         node_stack_t *new_node = head_stack + (sizeof(node_stack_t) * (*size));
+            //         // copy the head stack to the new node
+            //         printf("here3");
+            //         strcpy(new_node->txt, head_stack->txt);
+            //         printf("here2");
+            //         strcpy(head_stack->txt, buffer);
+            //         printf("here");
+            //     }
+            //     else
+            //     {
+            //         printf("Stack is full.\n");
+            //     }
+            //     bzero(buffer, 1024);
+            //     lock.l_type = F_UNLCK;
+            //     fcntl(filedescriptor_example, F_SETLKW, &lock);
+            //     printf("unlock \n");
+            //     return 0;
+            // }
+            // else if (strncmp(buffer, "TOP", 3) == 0)
+            // {
+            //     printf("DEBUG: TOP ");
+            //     // printf("DEBUG: from client : %s \n", buffer);
+            //     if ((*size) == 0)
+            //     {
+            //         // do noting
+            //         printf("Stack is empty.\n");
+            //     }
+            //     else
+            //     {
+
+            //         // char *msg = top(head_stack);
+            //         // printf("in top : %s \n", head_stack->txt);
+            //         // return head_stack->txt;
+            //         printf("DEBUG: TOP value %s\n", head_stack->txt);
+            //         send(newSocket, head_stack->txt, 1024, 0);
+            //         bzero(buffer, 1024);
+            //         // munmap(msg, strlen(msg));
+            //     }
+            //     bzero(buffer, 1024);
+            //     lock.l_type = F_UNLCK;
+            //     fcntl(filedescriptor_example, F_SETLKW, &lock);
+            //     printf("unlock \n");
+            // }
+            // else if (strncmp(buffer, "size", 4) == 0)
+            // {
+            //     // printf("DEBUG: IN SIZE: %s \n", buffer);
+            //     // printf("DEBUG: size call \n");
+            //     bzero(buffer, sizeof(buffer));
+            //     strcat(buffer, "DEBUG:");
+            //     sprintf(size_message, "%d", *size);
+            //     strncat(buffer, size_message, 1024);
+            //     printf("DEBUG: size call %d\n", *size);
+            //     send(newSocket, buffer, sizeof(buffer), 0);
+            // }
+
+            // else if (strncmp(buffer, "POP", 3) == 0)
+            // {
+
+            //     // printf("DEBUG: from client : %s \n", buffer);
+            //     if ((*size) == 0)
+            //     {
+            //         // do noting
+            //     }
+            //     else
+            //     {
+            //         // pop(head_stack, *size);
+            //         // get temp head node
+            //         node_stack_t *temp = head_stack->next;
+            //         // set head_stack to head_stack->next
+            //         head_stack->next = head_stack->next->next;
+            //         // free temp head node txt after allocated with mmap
+            //         strcpy(temp->txt, "");
+            //         *size = (*size) - 1;
+            //     }
+
+            //     // printf("DEBUG: pop good!\n");
+            // }
+
+            // if (strncmp(buffer, "hello from ruby \n", 17) == 0) /* hello from ruby \n */
+            // {
+
+            //     send(newSocket, buffer_ruby_test, 1024, 0);
+            //     bzero(buffer_ruby_test, sizeof(buffer_ruby_test));
+            //     sleep(1);
+            //     // unlock with fcntl
+            //     lock.l_type = F_UNLCK;
+            //     fcntl(filedescriptor_example, F_SETLKW, &lock);
+            //     close(newSocket);
+            //     printf("Disconnected from %s:%d\n", inet_ntoa(newAddr.sin_addr), ntohs(newAddr.sin_port));
+            //     return 0;
+            // }
         }
     }
-
+    wait(NULL);
     close(newSocket);
 
     return 0;

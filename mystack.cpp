@@ -29,18 +29,18 @@ char *push(char *str, node_stack_t *head_stack, node_stack_t *new_node)
 void pop(node_stack_t *head_stack, int size)
 {
     // if head_stack is NULL, return
-    if (size == 0)
-    {
-        return;
-    }
-    // get temp head node
-    node_stack_t *temp = head_stack->next;
-    // set head_stack to head_stack->next
-    head_stack->next = head_stack->next->next;
-    // free temp head node txt after allocated with mmap
-    strcpy(temp->txt, "");
-    // free temp head node after allocated with mmap
-    munmap(temp, sizeof(node_stack_t));
+    // if (size == 0)
+    // {
+    //     return;
+    // }
+    // // get temp head node
+    // node_stack_t *temp = head_stack->next;
+    // // set head_stack to head_stack->next
+    // head_stack->next = head_stack->next->next;
+    // // free temp head node txt after allocated with mmap
+    // strcpy(temp->txt, "");
+    // // free temp head node after allocated with mmap
+    // munmap(temp, sizeof(node_stack_t));
 }
 
 char *top(node_stack_t *head_stack)
