@@ -4,7 +4,7 @@
 ## Authors
 
 - [@Dolev Dublon, ID:207867342](https://www.github.com/dolev146)
-- [@Yakov Khodorkovsky, ID:207045063 ](https://www.github.com/yakov103)
+- [@Yakov Khodorkovski, ID:207045063 ](https://www.github.com/yakov103)
 
 information we used
 
