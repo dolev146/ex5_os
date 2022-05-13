@@ -73,7 +73,7 @@ int main()
     serverAddr.sin_port = htons(PORT);
     serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    ret = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+    ret = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)); // bind the socket to the server address
     if (ret < 0)
     {
         printf("DEBUG:[-]Error in binding.\n");
@@ -92,7 +92,7 @@ int main()
 
     while (1)
     {
-        newSocket = accept(sockfd, (struct sockaddr *)&newAddr, &addr_size);
+        newSocket = accept(sockfd, (struct sockaddr *)&newAddr, &addr_size); // accept the connection
         if (newSocket < 0)
         {
             exit(1);
