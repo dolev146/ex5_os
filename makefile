@@ -3,7 +3,10 @@ CFlags=-g -Wall
 BINS=server
 OBJS=server.o mystack.o
 
-all: $(BINS) clienttest clienttest2 client
+all: $(BINS) clienttest clienttest2 client forktest
+
+forktest: forktest.o
+	$(CC) $(CFlags) forktest.o -o forktest
 
 client: client.o
 	$(CC) $(CFlags) -o $@  $^ 
@@ -28,4 +31,4 @@ mystack.o: mystack.cpp mystack.hpp
 	$(CC) $(CFlags) -c -o $@  $^ -lpthread
 
 clean:
-	rm -f *.dSYM $(BINS) *.o client clienttest clienttest2
+	rm -f *.dSYM $(BINS) *.o client clienttest clienttest2 forktest
