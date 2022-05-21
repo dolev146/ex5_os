@@ -101,6 +101,28 @@ and in a diffrent terminal run
 ```bash
   ./clienttest2
 ```
+ 
+ 
+ The third test will be testing the stack implementation for blocking
+
+
+```bash
+  make clean;make; ./server
+```
+
+and in a diffrent terminal run
+
+```bash
+  ./forktest
+```
+
+ ![image](https://user-images.githubusercontent.com/62290677/169656774-2e419c30-d02c-4537-8676-b3a14528b8a6.png)
+
+
+ 
+this test test PUSH of 1000 time from diffrent forks , so it checks that if diffrent proccesses send requests samultaniasly works also.
+
+then ctrl+c to terminate the server
 
 you will see that the size of the stack will be 400 
 if you comment out the lines that use fcntl() you may get a smaller number as an affect of not handling correncty about multi-proccessing
