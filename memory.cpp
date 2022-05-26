@@ -1,5 +1,6 @@
 // https://stackoverflow.com/questions/33791310/c-mmap-initialize-at-0xffffffff
 // https://stackoverflow.com/questions/8475609/implementing-your-own-malloc-free-with-mmap-and-munmap
+// https://codereview.stackexchange.com/questions/276869/implementing-malloc-with-mmap
 #include "memory.hpp"
 #include <stdio.h>
 #include <sys/mman.h>

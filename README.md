@@ -12,6 +12,7 @@ information we used
 - https://www.youtube.com/watch?v=rPV6b8BUwxM
 - https://www.youtube.com/watch?v=0wrdcxkgujc
 - https://beej.us/guide/bgnet/html/#a-simple-stream-server
+- https://codereview.stackexchange.com/questions/276869/implementing-malloc-with-mmap
 
  
 # Multi-proccess server in c mmap() memeory for shared memory stack allocation and fcntl() for blocking
