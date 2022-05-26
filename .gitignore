@@ -11,3 +11,4 @@ clienttest2.o
 .vscode/settings.json
 forktest.o
 forktest
+*.o

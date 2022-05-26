@@ -1,9 +1,12 @@
 CC=g++
 CFlags=-g -Wall
 BINS=server
-OBJS=server.o mystack.o
+OBJS=server.o mystack.o 
 
-all: $(BINS) clienttest clienttest2 client forktest
+all: $(BINS) clienttest clienttest2 client forktest memory.o
+
+memory.o:
+	$(CC) $(CFlags) -o memory.o memory.cpp -c
 
 forktest: forktest.o
 	$(CC) $(CFlags) forktest.o -o forktest
