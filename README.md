@@ -130,5 +130,8 @@ if you comment out the lines that use fcntl() you may get a smaller number as an
 
 
 
-
+# Memory allocation with mmap 
+ 
+- https://codereview.stackexchange.com/questions/276869/implementing-malloc-with-mmap
   
+ [memory.cpp](https://github.com/dolev146/ex5_os/blob/main/memory.cpp) 
